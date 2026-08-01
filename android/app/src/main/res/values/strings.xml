@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Appliance Keeper</string>
+    <string name="title_activity_main">Appliance Keeper</string>
+    <string name="package_name">com.mowgli42.appliancekeeper</string>
+    <string name="custom_url_scheme">com.mowgli42.appliancekeeper</string>
+</resources>
