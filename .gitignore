@@ -1,0 +1,40 @@
+node_modules
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Capacitor / native
+/android/.gradle
+/ios/App/Pods
+/ios/DerivedData
+*.keystore
+*.jks
+
+# Beads local runtime
+.beads/embeddeddolt
+.beads/last-touched
+.beads/backup
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
