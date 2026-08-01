@@ -1,0 +1,7 @@
+schema: spec-driven
+
+context: |
+  Appliance Keeper: local-first household appliance / filter / warranty / service tracker.
+  Stack: TypeScript, Svelte 5, SvelteKit static, Capacitor, Tailwind, Vitest, Cucumber.
+  Audience: non-tech family members. Prefer plain language and large touch targets.
+  See openspec/project.md.

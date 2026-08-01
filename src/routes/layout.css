@@ -1,0 +1,214 @@
+@import 'tailwindcss';
+
+:root {
+	--ink: #1a2a27;
+	--ink-muted: #4a5f5a;
+	--paper: #f3f7f5;
+	--paper-deep: #e4eeea;
+	--moss: #2f6b5a;
+	--moss-deep: #1f4d41;
+	--amber: #c47b1a;
+	--coral: #c24b3a;
+	--line: color-mix(in oklab, var(--ink) 12%, transparent);
+	--shadow-soft: 0 18px 40px -28px color-mix(in oklab, var(--ink) 45%, transparent);
+	--font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+	--font-body: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif;
+	color: var(--ink);
+	background: var(--paper);
+	font-family: var(--font-body);
+	line-height: 1.45;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	min-height: 100%;
+	margin: 0;
+}
+
+body {
+	background:
+		radial-gradient(1200px 600px at 10% -10%, #d7ebe3 0%, transparent 55%),
+		radial-gradient(900px 500px at 100% 0%, #e8f0e4 0%, transparent 50%),
+		linear-gradient(180deg, #f7faf8 0%, var(--paper) 40%, var(--paper-deep) 100%);
+	background-attachment: fixed;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+	font: inherit;
+}
+
+:focus-visible {
+	outline: 3px solid color-mix(in oklab, var(--moss) 70%, white);
+	outline-offset: 2px;
+}
+
+.app-shell {
+	width: min(720px, 100%);
+	margin: 0 auto;
+	padding: 1.25rem 1rem 5.5rem;
+}
+
+.brand {
+	font-family: var(--font-display);
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	font-size: clamp(1.6rem, 4vw, 2rem);
+}
+
+.eyebrow {
+	color: var(--ink-muted);
+	font-size: 0.95rem;
+}
+
+.panel {
+	border: 1px solid var(--line);
+	border-radius: 1.25rem;
+	background: color-mix(in oklab, white 78%, transparent);
+	backdrop-filter: blur(8px);
+	box-shadow: var(--shadow-soft);
+}
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.4rem;
+	min-height: 2.75rem;
+	padding: 0.55rem 1rem;
+	border-radius: 999px;
+	border: 1px solid transparent;
+	cursor: pointer;
+	transition:
+		transform 160ms ease,
+		background 160ms ease,
+		border-color 160ms ease;
+}
+
+.btn:active {
+	transform: translateY(1px);
+}
+
+.btn-primary {
+	background: var(--moss);
+	color: white;
+}
+
+.btn-primary:hover {
+	background: var(--moss-deep);
+}
+
+.btn-ghost {
+	background: transparent;
+	border-color: var(--line);
+	color: var(--ink);
+}
+
+.btn-ghost:hover {
+	background: color-mix(in oklab, white 60%, transparent);
+}
+
+.urgency-overdue {
+	color: var(--coral);
+}
+
+.urgency-soon {
+	color: var(--amber);
+}
+
+.urgency-info {
+	color: var(--ink-muted);
+}
+
+.nav-bar {
+	position: fixed;
+	inset: auto 0 0;
+	z-index: 20;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 0.25rem;
+	padding: 0.65rem 0.75rem calc(0.65rem + env(safe-area-inset-bottom));
+	background: color-mix(in oklab, white 88%, transparent);
+	border-top: 1px solid var(--line);
+	backdrop-filter: blur(12px);
+}
+
+.nav-link {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.15rem;
+	padding: 0.45rem 0.25rem;
+	border-radius: 0.9rem;
+	color: var(--ink-muted);
+	font-size: 0.85rem;
+}
+
+.nav-link[aria-current='page'] {
+	color: var(--moss-deep);
+	background: color-mix(in oklab, var(--moss) 12%, white);
+	font-weight: 700;
+}
+
+.fade-up {
+	animation: fade-up 420ms ease both;
+}
+
+@keyframes fade-up {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.stagger > * {
+	animation: fade-up 480ms ease both;
+}
+
+.stagger > *:nth-child(1) {
+	animation-delay: 40ms;
+}
+.stagger > *:nth-child(2) {
+	animation-delay: 90ms;
+}
+.stagger > *:nth-child(3) {
+	animation-delay: 140ms;
+}
+.stagger > *:nth-child(4) {
+	animation-delay: 190ms;
+}
+.stagger > *:nth-child(5) {
+	animation-delay: 240ms;
+}
+.stagger > *:nth-child(6) {
+	animation-delay: 290ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation: none !important;
+		transition: none !important;
+	}
+}
