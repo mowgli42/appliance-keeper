@@ -1,28 +1,40 @@
 import { browser } from '$app/environment';
 import { seedHousehold } from '$lib/data/seed';
 import { markFilterChanged } from '$lib/appliance/attentionRules';
+import { removeMediaItem } from '$lib/appliance/mediaRules';
 import type {
 	Appliance,
 	FilterSchedule,
 	HouseholdState,
+	MediaAttachment,
 	ServiceRecord,
 	Warranty
 } from '$lib/types/appliance';
 
-const STORAGE_KEY = 'appliance-keeper:v1';
+const STORAGE_KEY = 'appliance-keeper:v2';
 
 function cloneSeed(): HouseholdState {
 	return structuredClone(seedHousehold);
 }
 
+function normalize(parsed: Partial<HouseholdState>): HouseholdState {
+	return {
+		appliances: parsed.appliances ?? [],
+		filters: parsed.filters ?? [],
+		warranties: parsed.warranties ?? [],
+		services: parsed.services ?? [],
+		media: parsed.media ?? []
+	};
+}
+
 function loadState(): HouseholdState {
 	if (!browser) return cloneSeed();
 	try {
-		const raw = localStorage.getItem(STORAGE_KEY);
+		const raw = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem('appliance-keeper:v1');
 		if (!raw) return cloneSeed();
-		const parsed = JSON.parse(raw) as HouseholdState;
+		const parsed = JSON.parse(raw) as Partial<HouseholdState>;
 		if (!parsed?.appliances || !parsed?.filters) return cloneSeed();
-		return parsed;
+		return normalize(parsed);
 	} catch {
 		return cloneSeed();
 	}
@@ -59,6 +71,7 @@ export function removeAppliance(id: string) {
 	state.filters = state.filters.filter((f) => f.applianceId !== id);
 	state.warranties = state.warranties.filter((w) => w.applianceId !== id);
 	state.services = state.services.filter((s) => s.applianceId !== id);
+	state.media = state.media.filter((m) => m.applianceId !== id);
 	persist(state);
 }
 
@@ -95,6 +108,16 @@ export function upsertService(service: ServiceRecord) {
 	} else {
 		state.services = [...state.services, service];
 	}
+	persist(state);
+}
+
+export function addMedia(attachment: MediaAttachment) {
+	state.media = [...state.media, attachment];
+	persist(state);
+}
+
+export function deleteMedia(mediaId: string) {
+	state.media = removeMediaItem(state.media, mediaId);
 	persist(state);
 }
 

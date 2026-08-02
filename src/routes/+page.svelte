@@ -1,6 +1,10 @@
 <script lang="ts">
 	import AttentionRow from '$lib/components/AttentionRow.svelte';
 	import { buildAttentionList } from '$lib/appliance/attentionRules';
+	import {
+		buildHouseholdDossierHtml,
+		openPrintableDossier
+	} from '$lib/appliance/dossierExport';
 	import { getHousehold, resetHousehold, todayIso } from '$lib/store/household.svelte';
 
 	const household = $derived(getHousehold());
@@ -13,6 +17,16 @@
 			todayIso()
 		)
 	);
+	let exportError = $state('');
+
+	function exportHousehold() {
+		exportError = '';
+		try {
+			openPrintableDossier(buildHouseholdDossierHtml(getHousehold(), todayIso()));
+		} catch (e) {
+			exportError = e instanceof Error ? e.message : 'Export failed';
+		}
+	}
 </script>
 
 <header class="hero fade-up">
@@ -49,9 +63,17 @@
 
 <section class="section tips fade-up">
 	<p class="eyebrow">Demo data stays on this device</p>
-	<button class="btn btn-ghost" type="button" onclick={() => resetHousehold()}>
-		Reset demo household
-	</button>
+	<div class="tip-actions">
+		<button class="btn btn-primary" type="button" onclick={exportHousehold}>
+			Print / save household PDF
+		</button>
+		<button class="btn btn-ghost" type="button" onclick={() => resetHousehold()}>
+			Reset demo household
+		</button>
+	</div>
+	{#if exportError}
+		<p class="error" role="alert">{exportError}</p>
+	{/if}
 </section>
 
 <style>
@@ -113,5 +135,16 @@
 
 	.tips {
 		justify-items: start;
+	}
+
+	.tip-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+	}
+
+	.error {
+		margin: 0;
+		color: var(--coral);
 	}
 </style>

@@ -29,6 +29,10 @@ export type AttentionKind = 'filter-due' | 'filter-overdue' | 'warranty-expiring
 
 export type AttentionUrgency = 'overdue' | 'soon' | 'info';
 
+export type MediaKind = 'nameplate' | 'receipt' | 'manual' | 'other';
+
+export type UsefulLifeRecommendation = 'repair-friendly' | 'evaluate' | 'replace-likely';
+
 export interface Appliance {
 	id: string;
 	name: string;
@@ -39,7 +43,23 @@ export interface Appliance {
 	serialNumber?: string;
 	purchasedAt?: string;
 	notes?: string;
+	/** @deprecated Prefer MediaAttachment gallery */
 	photoDataUrl?: string;
+}
+
+export interface MediaAttachment {
+	id: string;
+	applianceId: string;
+	kind: MediaKind;
+	/** Original filename or short caption */
+	label: string;
+	mimeType: string;
+	capturedAt: string;
+	/**
+	 * Web Phase 1: data URL stored on-device.
+	 * Native path: relative Capacitor Filesystem URI (future).
+	 */
+	dataUrl: string;
 }
 
 export interface FilterSchedule {
@@ -52,6 +72,8 @@ export interface FilterSchedule {
 	lastChangedAt: string;
 	/** Optional part / size hint for buying replacements */
 	partHint?: string;
+	/** Optional store / product URL for reordering */
+	purchaseUrl?: string;
 }
 
 export interface Warranty {
@@ -91,9 +113,26 @@ export interface AttentionItem {
 	daysUntil: number;
 }
 
+export interface UsefulLifeHint {
+	kind: ApplianceKind;
+	ageYears: number | null;
+	typicalMinYears: number;
+	typicalMaxYears: number;
+	recommendation: UsefulLifeRecommendation;
+	/** Plain-language sentence for the family UI */
+	summary: string;
+}
+
+export interface ManufacturerContact {
+	brand: string;
+	phone?: string;
+	supportUrl?: string;
+}
+
 export interface HouseholdState {
 	appliances: Appliance[];
 	filters: FilterSchedule[];
 	warranties: Warranty[];
 	services: ServiceRecord[];
+	media: MediaAttachment[];
 }

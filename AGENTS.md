@@ -18,7 +18,9 @@ This project uses [OpenSpec](https://github.com/Fission-AI/OpenSpec) with Gherki
 - Seed data: `src/lib/data/seed.ts`; persistence: `src/lib/store/household.svelte.ts` (`localStorage`).
 - Primary routes: `/` (attention), `/appliances`, `/appliances/[id]`, `/add`.
 - Capacitor wraps `build/` for native shells (`npm run build && npx cap sync`).
+- Media / useful-life / manufacturer contacts / dossier export live under `src/lib/appliance/`; gallery UI is `MediaGallery.svelte`.
 - Audience is non-tech family members — prefer plain language and large controls.
+- README docs order: summary → screenshots → architecture → sequence → remaining.
 
 ## Issue Tracking
 

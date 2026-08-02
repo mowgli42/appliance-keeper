@@ -43,3 +43,6 @@ Follow this order unless the user explicitly requests a different approach.
 | Attention list | `openspec/specs/attention/spec.md` |
 | Warranty | `openspec/specs/warranty/spec.md` |
 | Service records | `openspec/specs/service-record/spec.md` |
+| Media attachments | `openspec/specs/media/spec.md` |
+| Insights | `openspec/specs/insights/spec.md` |
+| Dossier export | `openspec/specs/dossier-export/spec.md` |

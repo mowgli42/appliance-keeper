@@ -8,14 +8,13 @@ Modern local-first apps (My Warranty Vault, ApplianceIQ, kept, etc.) still empha
 
 Appliance Keeper already has the data model spine (appliances, filters, warranties, service, attention). This change adds the high-value media and insight layer that makes the app feel complete for non-technical family members while staying fully local-first and private.
 
-## Scope (in)
+## What Changes
 
-- Attach one or more photos to an appliance (nameplate, receipt, overall shot) via Capacitor Camera / Filesystem.
-- Optional short video or additional document attachment (PDF manual, warranty card) stored on-device.
-- Simple “useful life” / age guidance: expected lifespan by appliance kind + current age → repair-vs-replace hint.
-- Built-in or lightly curated manufacturer support contacts (phone / web) for common brands, shown on the appliance detail page.
-- PDF export of a single appliance dossier or full household summary (for insurance, sale, or estate).
-- Filter purchase link / preferred store already partially present; reinforce as first-class.
+- Attach one or more photos/documents to an appliance (nameplate, receipt, manual) stored on-device.
+- Simple “useful life” / age guidance from local lookup tables (repair vs replace hint).
+- Curated manufacturer support contacts (phone / web) matched by brand.
+- Printable PDF-ready dossier export for one appliance or the whole household.
+- Optional filter purchase URL as a first-class reorder action.
 
 ## Scope (out for this change)
 
