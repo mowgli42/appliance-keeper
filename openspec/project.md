@@ -23,6 +23,9 @@ Appliance Keeper is a **local-first** household app for tracking appliances, fil
 | Coverage | `warranty` |
 | Work history | `service-record` |
 | Family home screen | `attention` |
+| Photos / manuals | `media` |
+| Useful life + support contacts | `insights` |
+| Printable PDF dossier | `dossier-export` |
 
 ## Conventions
 
@@ -31,8 +34,10 @@ Appliance Keeper is a **local-first** household app for tracking appliances, fil
 - Persistence: `localStorage` via `src/lib/store/household.svelte.ts` (Phase 1)
 - Spec → Beads → implement → Gherkin (see `openspec/WORKFLOW.md`)
 
-## Non-goals (Phase 1)
+## Non-goals (current)
 
 - Cloud sync / multi-device accounts
-- OCR of receipts or manuals
+- Live OCR / automatic serial extraction
+- Automatic manufacturer manual downloads
+- CPSC recall API (future opt-in)
 - Smart-home device control

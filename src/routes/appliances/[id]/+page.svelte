@@ -5,7 +5,15 @@
 		nextFilterDueAt,
 		daysBetween
 	} from '$lib/appliance/attentionRules';
+	import {
+		buildApplianceDossierHtml,
+		openPrintableDossier
+	} from '$lib/appliance/dossierExport';
 	import { kindLabels, roomLabels } from '$lib/appliance/labels';
+	import { lookupManufacturerContact } from '$lib/appliance/manufacturerContacts';
+	import { mediaForAppliance } from '$lib/appliance/mediaRules';
+	import { usefulLifeHint } from '$lib/appliance/usefulLife';
+	import MediaGallery from '$lib/components/MediaGallery.svelte';
 	import {
 		completeFilterChange,
 		getHousehold,
@@ -23,7 +31,11 @@
 			b.performedAt.localeCompare(a.performedAt)
 		)
 	);
+	const media = $derived(id ? mediaForAppliance(household.media, id) : []);
 	const asOf = todayIso();
+	const life = $derived(appliance ? usefulLifeHint(appliance, asOf) : null);
+	const support = $derived(lookupManufacturerContact(appliance?.brand));
+	let exportError = $state('');
 
 	function onChanged(filterId: string) {
 		completeFilterChange(filterId, todayIso());
@@ -34,6 +46,17 @@
 		if (!confirm(`Remove ${appliance.name}? This cannot be undone on this device.`)) return;
 		removeAppliance(appliance.id);
 		goto('/appliances/');
+	}
+
+	function onExport() {
+		if (!appliance) return;
+		exportError = '';
+		try {
+			const html = buildApplianceDossierHtml(getHousehold(), appliance.id, asOf);
+			openPrintableDossier(html);
+		} catch (e) {
+			exportError = e instanceof Error ? e.message : 'Export failed';
+		}
 	}
 </script>
 
@@ -53,6 +76,40 @@
 			</p>
 		{/if}
 	</header>
+
+	{#if life}
+		<section class="section fade-up" aria-labelledby="life-heading">
+			<h2 id="life-heading">Useful life</h2>
+			<div class="panel tip" data-recommendation={life.recommendation}>
+				<p>{life.summary}</p>
+			</div>
+		</section>
+	{/if}
+
+	<section class="section fade-up" aria-labelledby="support-heading">
+		<h2 id="support-heading">Manufacturer support</h2>
+		<div class="panel tip">
+			{#if support.found}
+				<p>
+					<strong>{support.contact.brand}</strong>
+					{#if support.contact.phone}
+						· <a href={`tel:${support.contact.phone}`}>{support.contact.phone}</a>
+					{/if}
+				</p>
+				{#if support.contact.supportUrl}
+					<p>
+						<a href={support.contact.supportUrl} target="_blank" rel="noopener noreferrer">
+							Open support site
+						</a>
+					</p>
+				{/if}
+			{:else}
+				<p class="muted">{support.searchHint}</p>
+			{/if}
+		</div>
+	</section>
+
+	<MediaGallery applianceId={appliance.id} items={media} />
 
 	<section class="section fade-up" aria-labelledby="filters-heading">
 		<h2 id="filters-heading">Filters</h2>
@@ -77,6 +134,13 @@
 							</p>
 							{#if filter.partHint}
 								<p class="muted">Buy: {filter.partHint}</p>
+							{/if}
+							{#if filter.purchaseUrl}
+								<p>
+									<a href={filter.purchaseUrl} target="_blank" rel="noopener noreferrer">
+										Reorder filter
+									</a>
+								</p>
 							{/if}
 						</div>
 						<button class="btn btn-primary" type="button" onclick={() => onChanged(filter.id)}>
@@ -144,8 +208,14 @@
 		{/if}
 	</section>
 
-	<section class="section fade-up">
+	<section class="section fade-up actions">
+		<button class="btn btn-primary" type="button" onclick={onExport}>
+			Print / save PDF dossier
+		</button>
 		<button class="btn btn-ghost danger" type="button" onclick={onRemove}>Remove appliance</button>
+		{#if exportError}
+			<p class="error" role="alert">{exportError}</p>
+		{/if}
 	</section>
 {/if}
 
@@ -180,13 +250,17 @@
 		gap: 0.7rem;
 	}
 
+	.item,
+	.tip {
+		padding: 1rem 1.1rem;
+	}
+
 	.item {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
 		gap: 0.85rem;
-		padding: 1rem 1.1rem;
 	}
 
 	.item strong {
@@ -194,8 +268,31 @@
 		letter-spacing: -0.02em;
 	}
 
+	.tip p {
+		margin: 0.25rem 0 0;
+	}
+
+	.tip p:first-child {
+		margin-top: 0;
+	}
+
+	.actions {
+		justify-items: start;
+	}
+
 	.danger {
 		color: var(--coral);
 		border-color: color-mix(in oklab, var(--coral) 35%, var(--line));
+	}
+
+	.error {
+		margin: 0;
+		color: var(--coral);
+	}
+
+	a {
+		color: var(--moss-deep);
+		text-decoration: underline;
+		text-underline-offset: 2px;
 	}
 </style>

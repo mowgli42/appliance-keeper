@@ -49,7 +49,8 @@ export const seedHousehold: HouseholdState = {
 			label: 'Fridge water filter',
 			intervalDays: 180,
 			lastChangedAt: '2025-11-01',
-			partHint: 'EveryDrop EDR2RXD1'
+			partHint: 'EveryDrop EDR2RXD1',
+			purchaseUrl: 'https://www.amazon.com/s?k=EveryDrop+EDR2RXD1'
 		},
 		{
 			id: 'flt-hvac',
@@ -57,7 +58,8 @@ export const seedHousehold: HouseholdState = {
 			label: 'HVAC air filter',
 			intervalDays: 90,
 			lastChangedAt: '2026-04-15',
-			partHint: '16x25x1 MERV 11'
+			partHint: '16x25x1 MERV 11',
+			purchaseUrl: 'https://www.amazon.com/s?k=16x25x1+MERV+11'
 		},
 		{
 			id: 'flt-washer-mesh',
@@ -106,5 +108,6 @@ export const seedHousehold: HouseholdState = {
 			costCents: 24500,
 			technician: 'Home Appliance Co.'
 		}
-	]
+	],
+	media: []
 };

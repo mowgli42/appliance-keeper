@@ -6,11 +6,28 @@ import {
 	markFilterChanged,
 	nextFilterDueAt
 } from '../../src/lib/appliance/attentionRules.ts';
+import {
+	buildApplianceDossierHtml,
+	buildHouseholdDossierHtml
+} from '../../src/lib/appliance/dossierExport.ts';
+import {
+	lookupManufacturerContact,
+	type ContactLookup
+} from '../../src/lib/appliance/manufacturerContacts.ts';
+import {
+	createMediaAttachment,
+	mediaForAppliance,
+	removeMediaItem
+} from '../../src/lib/appliance/mediaRules.ts';
+import { usefulLifeHint } from '../../src/lib/appliance/usefulLife.ts';
 import { seedHousehold } from '../../src/lib/data/seed.ts';
 import type {
 	Appliance,
 	AttentionItem,
-	FilterSchedule
+	FilterSchedule,
+	HouseholdState,
+	MediaAttachment,
+	UsefulLifeHint
 } from '../../src/lib/types/appliance.ts';
 
 type World = {
@@ -20,12 +37,20 @@ type World = {
 	appliances: Appliance[];
 	filters: FilterSchedule[];
 	attention: AttentionItem[];
+	household?: HouseholdState;
+	hint?: UsefulLifeHint;
+	contact?: ContactLookup;
+	brand?: string;
+	media: MediaAttachment[];
+	lastMediaId?: string;
+	dossierHtml?: string;
 };
 
 const world: World = {
 	appliances: [],
 	filters: [],
-	attention: []
+	attention: [],
+	media: []
 };
 
 Given(
@@ -106,7 +131,8 @@ Then('attention should include {string}', function (title: string) {
 });
 
 Given('the demo household seed', function () {
-	world.appliances = structuredClone(seedHousehold.appliances);
+	world.household = structuredClone(seedHousehold);
+	world.appliances = world.household.appliances;
 });
 
 Then('an appliance named {string} should exist', function (name: string) {
@@ -117,4 +143,130 @@ Then('it should be in room {string}', function (room: string) {
 	const fridge = world.appliances.find((a) => a.name === 'Kitchen fridge');
 	assert.ok(fridge);
 	assert.equal(fridge.room, room);
+});
+
+Given('a refrigerator purchased on {string}', function (purchasedAt: string) {
+	world.appliances = [
+		{
+			id: 'app-fridge',
+			name: 'Kitchen fridge',
+			kind: 'refrigerator',
+			room: 'kitchen',
+			purchasedAt
+		}
+	];
+});
+
+When('useful-life guidance is requested as of {string}', function (asOf: string) {
+	assert.ok(world.appliances[0]);
+	world.hint = usefulLifeHint(world.appliances[0], asOf);
+});
+
+Then('the age in years should be {int}', function (years: number) {
+	assert.equal(world.hint?.ageYears, years);
+});
+
+Then(
+	'the typical lifespan should be {int} to {int} years',
+	function (min: number, max: number) {
+		assert.equal(world.hint?.typicalMinYears, min);
+		assert.equal(world.hint?.typicalMaxYears, max);
+	}
+);
+
+Then('the recommendation should be {string}', function (recommendation: string) {
+	assert.equal(world.hint?.recommendation, recommendation);
+});
+
+Given('an appliance brand of {string}', function (brand: string) {
+	world.brand = brand;
+});
+
+When('manufacturer contacts are looked up', function () {
+	world.contact = lookupManufacturerContact(world.brand);
+});
+
+Then('a support entry for {string} should be returned', function (brand: string) {
+	assert.ok(world.contact?.found);
+	if (world.contact?.found) {
+		assert.equal(world.contact.contact.brand, brand);
+	}
+});
+
+Then('no curated contact should be returned', function () {
+	assert.equal(world.contact?.found, false);
+});
+
+Then('the search hint should include {string}', function (text: string) {
+	assert.ok(world.contact && !world.contact.found);
+	if (world.contact && !world.contact.found) {
+		assert.match(world.contact.searchHint, new RegExp(text));
+	}
+});
+
+Given('an empty media gallery', function () {
+	world.media = [];
+});
+
+When('a nameplate photo is attached to {string}', function (applianceId: string) {
+	const item = createMediaAttachment({
+		applianceId,
+		kind: 'nameplate',
+		label: 'nameplate.jpg',
+		mimeType: 'image/jpeg',
+		dataUrl: 'data:image/jpeg;base64,xx',
+		capturedAt: '2026-08-01'
+	});
+	world.media.push(item);
+	world.lastMediaId = item.id;
+});
+
+Given('a receipt attachment on {string}', function (applianceId: string) {
+	const item = createMediaAttachment({
+		applianceId,
+		kind: 'receipt',
+		label: 'receipt.pdf',
+		mimeType: 'application/pdf',
+		dataUrl: 'data:application/pdf;base64,xx',
+		capturedAt: '2026-08-01'
+	});
+	world.media = [item];
+	world.lastMediaId = item.id;
+});
+
+When('that media item is removed', function () {
+	assert.ok(world.lastMediaId);
+	world.media = removeMediaItem(world.media, world.lastMediaId);
+});
+
+Then(
+	'the gallery for {string} should have {int} items',
+	function (applianceId: string, count: number) {
+		assert.equal(mediaForAppliance(world.media, applianceId).length, count);
+	}
+);
+
+Then('the first item kind should be {string}', function (kind: string) {
+	assert.equal(world.media[0]?.kind, kind);
+});
+
+When(
+	'an appliance dossier is generated for {string} as of {string}',
+	function (applianceId: string, asOf: string) {
+		assert.ok(world.household);
+		world.dossierHtml = buildApplianceDossierHtml(world.household, applianceId, asOf);
+	}
+);
+
+When('a household dossier is generated as of {string}', function (asOf: string) {
+	assert.ok(world.household);
+	world.dossierHtml = buildHouseholdDossierHtml(world.household, asOf);
+});
+
+Then('the dossier should include {string}', function (text: string) {
+	assert.ok(world.dossierHtml?.includes(text));
+});
+
+Then('the dossier should note that data is local-only', function () {
+	assert.match(world.dossierHtml ?? '', /local-only/i);
 });
