@@ -33,6 +33,13 @@ Appliance Keeper is a **local-first** household app for tracking appliances, fil
 
 ## Non-goals (Phase 1)
 
-- Cloud sync / multi-device accounts
 - OCR of receipts or manuals
 - Smart-home device control
+- Realtime CRDT / multi-writer merge
+- Recall APIs
+
+## Planned enhancement (not built)
+
+**Optional account sync** — sign in, then pull/push the existing household JSON so iPhone and Android can share one household. Local-first remains the default when signed out.
+
+See [`openspec/changes/add-optional-account-json-sync/`](changes/add-optional-account-json-sync/proposal.md) (proposal + design).

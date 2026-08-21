@@ -51,9 +51,10 @@ sequenceDiagram
 - Warranty / service add forms (Beads)
 - Native Capacitor Filesystem storage for large media (Beads)
 - Optional on-device OCR for nameplates (future)
-- Cloud sync, recall APIs — explicitly out of scope for now
+- **Optional account sync** (sign in → pull/push household JSON across iPhone/Android) — proposed, not built: [`openspec/changes/add-optional-account-json-sync/`](openspec/changes/add-optional-account-json-sync/proposal.md)
+- Recall APIs — out of scope for now
 
-See `openspec/project.md` for living specs, including archived Centriq-style media / useful-life / dossier work that is specified but not all shipped in the Phase 1 UI.
+See `openspec/project.md` for living specs, including Centriq-style media / useful-life / dossier work that is specified but not all shipped in the Phase 1 UI.
 
 ## Run locally
 
