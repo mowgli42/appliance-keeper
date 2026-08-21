@@ -30,6 +30,7 @@ We want the smallest cloud step that makes Capacitor apps usable across devices:
 
 ## References
 
+- **Walkthrough (today + planned sync):** [`docs/WALKTHROUGH.md`](../../../docs/WALKTHROUGH.md)
 - Current store: `src/lib/store/household.svelte.ts` (`HouseholdState` JSON)
 - Product direction: Capacitor iOS/Android shells already planned; sync unlocks multi-device
 - Backend candidates: Supabase (hosted Postgres) or PocketBase (self-hosted SQLite)

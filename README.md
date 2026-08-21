@@ -4,11 +4,13 @@ Local-first household tracker for appliances, filter changes, warranties, and se
 
 Today you can browse a demo household, see due and overdue filters/warranties/service, and mark a filter as changed. Nothing leaves the device.
 
+**Full walkthrough (screenshots + steps):** [docs/WALKTHROUGH.md](docs/WALKTHROUGH.md)
+
 ## Screenshots
 
-| Needs attention | Appliance detail |
-|-----------------|------------------|
-| ![Needs attention home](docs/images/attention-home.png) | ![Kitchen fridge detail](docs/images/appliance-detail.png) |
+| Needs attention | Appliances | Detail |
+|-----------------|------------|--------|
+| ![Needs attention](docs/images/01-attention-home.png) | ![Appliances list](docs/images/02-appliances-list.png) | ![Fridge detail](docs/images/03-appliance-detail.png) |
 
 ## Architecture
 
