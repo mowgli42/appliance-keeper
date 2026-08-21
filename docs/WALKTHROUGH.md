@@ -54,7 +54,7 @@ Back on **Today**, that filter drops off (or moves later) because attention is r
 
 ## 6. Add an appliance
 
-**Add** uses everyday language — name, type, room, optional brand/model. Save opens the new appliance’s detail page.
+**Add** uses everyday language — name, type, room, optional brand/model. Under **Filter care**, turn on “has a filter”, name what to change (e.g. Water filter), pick **how often** (month / 3 months / 6 months / year), and set last changed. You can add more than one filter. Save opens the new appliance’s detail page with those schedules already set.
 
 ![Add appliance form](images/06-add-appliance.png)
 
