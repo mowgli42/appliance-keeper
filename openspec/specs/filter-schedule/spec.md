@@ -15,9 +15,15 @@ The system SHALL compute `nextDueAt = lastChangedAt + intervalDays` in calendar 
 - **WHEN** the next due date is calculated
 - **THEN** the due date SHALL be 2026-06-30
 
-### Requirement: Mark filter changed
+### Requirement: Change frequency
 
-The system SHALL update `lastChangedAt` when a user marks a filter as changed, resetting the due date.
+Each filter schedule SHALL store `intervalDays` as the change frequency used to compute the next due date.
+
+#### Scenario: Frequency presets map to days
+- **GIVEN** a family chooses "Every 6 months" when setting up a filter
+- **WHEN** the filter schedule is saved
+- **THEN** `intervalDays` SHALL be 180
+
 
 #### Scenario: Mark changed today
 - **GIVEN** a filter due in the past

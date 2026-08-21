@@ -6,6 +6,7 @@ import {
 	markFilterChanged,
 	nextFilterDueAt
 } from '../../src/lib/appliance/attentionRules.ts';
+import { frequencyPresets, suggestedFilterForKind } from '../../src/lib/appliance/filterSetup.ts';
 import { seedHousehold } from '../../src/lib/data/seed.ts';
 import type {
 	Appliance,
@@ -118,3 +119,36 @@ Then('it should be in room {string}', function (room: string) {
 	assert.ok(fridge);
 	assert.equal(fridge.room, room);
 });
+
+Given('appliance kind {string}', function (kind: string) {
+	(world as { kind?: string }).kind = kind;
+});
+
+When('a filter suggestion is requested as of {string}', function (asOf: string) {
+	const kind = (world as { kind?: string }).kind;
+	assert.ok(kind);
+	(world as { suggestion?: ReturnType<typeof suggestedFilterForKind> }).suggestion =
+		suggestedFilterForKind(kind as Appliance['kind'], asOf);
+});
+
+Then('the suggested filter label should be {string}', function (label: string) {
+	const suggestion = (world as { suggestion?: { label: string } }).suggestion;
+	assert.equal(suggestion?.label, label);
+});
+
+Then('the suggested interval days should be {int}', function (days: number) {
+	const suggestion = (world as { suggestion?: { intervalDays: number } }).suggestion;
+	assert.equal(suggestion?.intervalDays, days);
+});
+
+Given('the frequency presets', function () {
+	(world as { presets?: typeof frequencyPresets }).presets = frequencyPresets;
+});
+
+Then(
+	'the preset {string} should equal {int} days',
+	function (label: string, days: number) {
+		const presets = (world as { presets?: typeof frequencyPresets }).presets;
+		assert.equal(presets?.find((p) => p.label === label)?.days, days);
+	}
+);
