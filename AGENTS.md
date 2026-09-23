@@ -1,32 +1,61 @@
-## OpenSpec + Gherkin + Beads workflow
+# appliance-keeper
 
-**Full workflow:** `openspec/WORKFLOW.md`
+Local-first household tracker for appliances, filters, warranties, and service history. Built for non-tech family members (plain language, calm Needs-attention home).
+Stack: SvelteKit 5 + TypeScript + Tailwind v4 + adapter-static (SPA) + Capacitor (Android/iOS) + localStorage.
+Posture: ponytail (repo >30 days). Shared health pack in `.cursor/skills/` and `.cursor/rules/` — use for [Health] work.
 
-This project uses [OpenSpec](https://github.com/Fission-AI/OpenSpec) with Gherkin verification and [Beads](https://github.com/steveyegge/beads) for task tracking.
+## Commands
 
-**Before implementing features:**
-- Read `openspec/WORKFLOW.md` and relevant `openspec/specs/<capability>/spec.md`
-- Run `bd ready` and announce the issue you are taking
-- Treat scenario blocks as the behavioral contract; mirror them in `features/*.feature`
+- Dev: `npm run dev` → http://localhost:5173
+- Test unit: `npm test` (or `npm run test:unit -- --run path/to/file.test.ts`)
+- Test Gherkin: `npm run test:gherkin`
+- Check: `npm run check`
+- Build + Capacitor: `npm run build && npm run cap:sync`
+- Screenshots: `npm run screenshots`
 
-**Workflow:** spec → Beads issues → implement → `npm test` + `npm run test:gherkin` → archive
+## Hard prohibitions
 
-## Learned Workspace Facts
+- Do not invent cloud sync, accounts, or off-device storage unless an OpenSpec change explicitly lands it. Keep data on-device (`localStorage` / future Capacitor Filesystem).
+- Do not use TodoWrite / markdown TODOs. Use `bd` for all task tracking.
+- Do not rewrite OpenSpec / Gherkin to match a hoped-for future. Update them only when code already changed.
+- Do not add new npm dependencies for trivial jobs; climb the Ponytail ladder first.
 
-- Appliance Keeper is SvelteKit (Svelte 5) + TypeScript + Tailwind v4 + `@sveltejs/adapter-static` with SPA fallback.
-- Domain types: `src/lib/types/appliance.ts`; due-date/attention rules: `src/lib/appliance/attentionRules.ts`.
-- Seed data: `src/lib/data/seed.ts`; persistence: `src/lib/store/household.svelte.ts` (`localStorage`).
-- Primary routes: `/` (attention), `/appliances`, `/appliances/[id]`, `/add`.
-- Capacitor wraps `build/` for native shells (`npm run build && npx cap sync`).
-- Audience is non-tech family members — prefer plain language and large controls.
+## Verify by change type
 
-## Issue Tracking
+| Change | Check |
+| --- | --- |
+| UI / Svelte routes | `npm run dev` + exercise `/`, `/appliances`, `/appliances/[id]`, `/add` |
+| Attention / due rules | `npm test` (attentionRules) + `npm run test:gherkin` |
+| Spec | matching `features/*.feature` + `openspec/specs/<cap>/spec.md` still true |
+| Capacitor / build | `npm run build && npm run cap:sync` |
 
-```bash
-bd ready
-bd create "Title" --type task --priority 2
-bd close <id>
-```
+## Source of truth
+
+- Behavior: `openspec/specs/` + `features/*.feature`
+- Remaining work: `bd ready` / Beads
+- Walkthrough: `docs/WALKTHROUGH.md` + `docs/images/`
+- Workflow: `openspec/WORKFLOW.md`
+
+## House vocabulary
+
+- **Needs attention** — the home screen listing due/overdue filters, warranties, service. Prefer this phrase over “dashboard” or “alerts”.
+- **Household store** — the on-device Svelte store (`src/lib/store/household.svelte.ts`). Not a server DB.
+
+## Good / bad (from this repo)
+
+Bad: inventing a new “sync” route or Firebase without an archived OpenSpec change.
+Good: extend `attentionRules.ts` + seed + Gherkin for a new due-date rule.
+
+## Borrowed patterns
+
+- Hard prohibitions from ossrules.md pattern `hard-prohibition` (e.g. opencode, better-auth style firm “do not”).
+- Verification by change type from `verification-matrix`.
+- Pointing at source of truth from `single-source`.
+- House vocabulary from `house-vocabulary`.
+
+## Beads + session close
+
+Use `bd ready` / `bd show` / `bd close`. Full Beads integration rules remain in the retained block below; session is not done until `git push` succeeds.
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:7510c1e2 -->
 ## Beads Issue Tracker
